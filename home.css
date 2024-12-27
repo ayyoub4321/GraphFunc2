@@ -56,6 +56,7 @@ header nav {
 header nav ul {
     display: flex;
     justify-content: space-evenly;
+    position: relative;
 }
 
 header nav ul li {
@@ -99,6 +100,7 @@ main {
     align-items: center;
     justify-content: center;
     width: 100%;
+    /* flex-wrap: wrap; */
 }
 
 .resulta{
@@ -147,4 +149,60 @@ main .form form input {
         border-radius: 12px;
         box-shadow: black 3px 3px 4px;
 
+}
+header .icon{
+    width: 20px;
+    height: 15px;
+    display: flex;
+    justify-content: space-between ;
+    flex-wrap: wrap;
+    display: none;
+}
+header .icon span{
+    width: 100%;
+    height: 2px;
+    background: black;
+    display: block;
+}
+header .icon span:nth-child(2){
+    width: 50%;
+    
+    
+}
+@media (max-width: 600px) {
+    header .icon{
+        position: absolute;
+        display: flex;
+        left: 80%;
+        top: 30px;
+    }
+    header  .icon:hover + ul{
+        display: flex;
+    }
+    header nav ul{
+        flex-direction: column;
+        position: relative;
+        left: 60%;
+        top:70px;
+        display: none;
+        
+    }
+    main{
+        flex-wrap: wrap;
+    }
+    main .form{
+        height: 302px;
+        flex-basis: 100%
+    }
+    main .resulta{
+        flex-basis: 100%;
+        display: flex;
+        overflow: auto;
+        flex-wrap: wrap;
+
+        
+    }
+main .resulta {
+    overflow-y: auto;
+}
 }

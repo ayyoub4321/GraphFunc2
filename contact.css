@@ -99,3 +99,14 @@ img{
 	margin-right: -4rem;
   width: 542px;
 }
+@media (max-width: 700px) {
+  img{
+    display: none;
+  }
+}
+@media (max-width: 1000px) {
+  img{
+    height: 13rem;
+    width: 242px;
+  }
+}
