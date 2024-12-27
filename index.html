@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>function</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="home.css">
+    <link rel="icon" href="logo.jpeg">
+       
+</head>
+
+<body>
+    <header>
+        <div class="logo">logo</div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="About.html">About US</a></li>
+
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="form">
+            <form id="polynomialForm" class="form" onsubmit="return valid() ">
+                <label for="fonction">Entrez le polynôme :</label>
+                <input type="text" id="fonction" name="fonction" required placeholder="5x^2+4x+3">
+                <button type="submit" class="button">Tracer le graphique</button>
+            </form>
+        </div>
+        <div class="resulta">
+            <div id="graph" class="error">No graph to display.</div>
+        </div>
+    </main>
+        <script>
+            document.getElementById('polynomialForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+    
+                const polynomial = document.getElementById('fonction').value;
+                const errorDiv = document.querySelector('.error');
+                errorDiv.textContent = '';
+    
+                if (!polynomial) {
+                    errorDiv.textContent = 'Veuillez entrer un polynôme.';
+                    return;
+                }
+    
+                // Nettoyer et préparer l'expression mathématique
+                const preparedPolynomial = polynomial.replace(/(\d)([a-zA-Z])/g, '$1*$2').toLowerCase();
+    
+                try {
+                    // Convertir l'expression en une fonction utilisable
+                    const f = math.compile(preparedPolynomial);
+                    let xValues=[],
+                        yValues=[];
+                    // Générer les valeurs pour x et y
+                    for (let x = -1000; x <= 1000; x += 0.1) {
+                        xValues.push(x);
+                        // Calculer la valeur de y pour chaque valeur de x
+                        yValues.push(f.evaluate({ x }));
+                    }
+                    // Tracer le graphique avec Plotly
+                    const trace = {
+                        x: xValues,
+                        y: yValues,
+                        type: 'scatter',
+                        mode: 'lines',
+                        name: `y = ${polynomial}`
+                    };
+    
+                    const layout = {
+                        title: 'Graphique du Polynôme',
+                        xaxis: { title: 'x' },
+                        yaxis: { title: 'y' },
+                        showlegend: true,
+                        grid: { visible: true }
+                    };
+    
+                    Plotly.newPlot('graph', [trace], layout);
+                } catch (error) {
+                    errorDiv.textContent = `Erreur : ${error.message}`;
+                }
+            });
+        </script>
+    <script>
+        $(document).ready(function () {
+            $('#polynomialForm').on('submit', function (e) {
+                e.preventDefault();
+
+                const polynomial = $('#polynomial').val();
+                $.ajax({
+                    url: '/plot_polynomial/', // URL vers votre vue Django
+                    method: 'POST',
+                    data: {
+                        polynomial: polynomial,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        if (response.image) {
+                            $('#graphImage').attr('src', 'data:image/png;base64,' + response.image).show();
+                        } else if (response.error) {
+                            alert('Erreur : ' + response.error);
+                        }
+                    },
+                    error: function () {
+                        alert('Une erreur est survenue.');
+                    }
+                });
+            })
+        })
+    </script>
+</body>
+
+</html>
